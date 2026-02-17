@@ -18,6 +18,8 @@ El proyecto combina preparación de datos en SQL, modelado estadístico en R y u
 
 - Script_R-Studio_Forecast.R → Código en R utilizado para el análisis exploratorio, construcción de modelos de forecast, evaluación y visualizaciones.
 
+- Presentacion.pdf → Presentacion del proyecto con imagenes y conclusiones
+
 - DATA / → Carpeta que contiene los archivos CSV utilizados en el proyecto (fuente pública – Kaggle).
 
 ---
