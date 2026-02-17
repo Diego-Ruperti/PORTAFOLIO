@@ -16,6 +16,8 @@ El análisis se desarrolla en R y los resultados se documentan en formatos orien
 
 - **AB_Test_Analysis.R** → Código en R utilizado para la preparación de datos, análisis exploratorio, pruebas estadísticas y visualizaciones.
 
+- Presentacion.pdf → Presentacion del proyecto con imagenes y conclusiones
+
 - **DATA / WA_Marketing-Campaign.csv** → Conjunto de datos utilizado en el análisis (fuente pública – Kaggle).
 
 ---
