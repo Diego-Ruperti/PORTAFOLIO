@@ -12,6 +12,7 @@ El desarrollo se realizó íntegramente en R, generando resultados validados est
 - Resumen_Ejecutivo.pdf → Documento de alto impacto orientado a la toma de decisiones gerenciales.
 - Informe_Ejecutivo.pdf → Documento técnico detallado con la metodología, validación de supuestos y desarrollo completo del proyecto.
 - Script_R-Studio_Clustering_Vinos.R → Código fuente en R para la limpieza, normalización, modelado y visualización.
+- Presentacion.pdf → Presentacion del proyecto con imagenes y conclusiones.
 - DATA / wine-clustering.csv → Dataset original con las 13 variables físico-químicas.
 
 ---
