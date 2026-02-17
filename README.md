@@ -43,6 +43,7 @@ Cada carpeta corresponde a un proyecto independiente, documentado y reproducible
 - Resumen_Ejecutivo.pdf → Resumen ejecutivo del proyecto
 - Informe_Ejecutivo.pdf → Análisis completo y conclusiones
 - Script_Analisis → Código del análisis
+- Presentacion.pdf → Presentacion del proyecto con imagenes y conclusiones
 - Data / dataset.csv → Datos utilizados (fuente pública)
 
 ---
