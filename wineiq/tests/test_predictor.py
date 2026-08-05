@@ -2,13 +2,7 @@ import pandas as pd
 import pytest
 
 from src import config
-from src.predictor import (
-    ValidationError,
-    load_cluster_profiles,
-    load_pipeline,
-    predict_single,
-    validate_columns,
-)
+from src.predictor import ValidationError, WinePredictor
 
 VALID_WINE = {
     "Alcohol": 14.23,
@@ -28,62 +22,53 @@ VALID_WINE = {
 
 
 @pytest.fixture(scope="module")
-def pipeline():
-    return load_pipeline(config.MODEL_PATH)
-
-
-@pytest.fixture(scope="module")
-def profiles():
-    return load_cluster_profiles(config.CLUSTER_PROFILE_PATH)
+def predictor():
+    return WinePredictor(config.MODEL_PATH, config.CLUSTER_PROFILE_PATH)
 
 
 def test_validate_columns_accepts_complete_numeric_row():
     df = pd.DataFrame([VALID_WINE])
-    assert validate_columns(df) == []
+    assert WinePredictor.validate_columns(df) == []
 
 
 def test_validate_columns_reports_missing_column():
     df = pd.DataFrame([{k: v for k, v in VALID_WINE.items() if k != "Proline"}])
-    errors = validate_columns(df)
+    errors = WinePredictor.validate_columns(df)
     assert any("Proline" in e for e in errors)
 
 
 def test_validate_columns_reports_non_numeric_value():
     df = pd.DataFrame([dict(VALID_WINE, Alcohol="catorce")])
-    errors = validate_columns(df)
+    errors = WinePredictor.validate_columns(df)
     assert any("Alcohol" in e and "no numéricos" in e for e in errors)
 
 
 def test_validate_columns_reports_missing_value():
     df = pd.DataFrame([dict(VALID_WINE, Hue=None)])
-    errors = validate_columns(df)
+    errors = WinePredictor.validate_columns(df)
     assert any("Hue" in e and "faltantes" in e for e in errors)
 
 
-def test_predict_single_returns_known_segment(pipeline, profiles):
-    result = predict_single(pipeline, profiles, VALID_WINE)
+def test_predict_single_returns_known_segment(predictor):
+    result = predictor.predict_single(VALID_WINE)
     assert result["segment"] in {"Premium Reserve", "Classic Balance", "Light & Fresh"}
     assert result["price_range"] in {"$40-60", "$15-25", "$8-15"}
 
 
-def test_predict_single_raises_on_invalid_input(pipeline, profiles):
+def test_predict_single_raises_on_invalid_input(predictor):
     bad_wine = dict(VALID_WINE, Alcohol="catorce")
     with pytest.raises(ValidationError):
-        predict_single(pipeline, profiles, bad_wine)
+        predictor.predict_single(bad_wine)
 
 
-def test_predict_batch_classifies_every_row_and_adds_columns(pipeline, profiles):
-    from src.predictor import predict_batch
-
+def test_predict_batch_classifies_every_row_and_adds_columns(predictor):
     df = pd.DataFrame([VALID_WINE, VALID_WINE])
-    result = predict_batch(pipeline, profiles, df)
+    result = predictor.predict_batch(df)
     assert len(result) == 2
     assert {"Cluster", "Segmento", "Precio_Sugerido", "Canal_Sugerido"} <= set(result.columns)
 
 
-def test_predict_batch_rejects_whole_file_on_any_invalid_row(pipeline, profiles):
-    from src.predictor import predict_batch
-
+def test_predict_batch_rejects_whole_file_on_any_invalid_row(predictor):
     df = pd.DataFrame([VALID_WINE, dict(VALID_WINE, Alcohol="catorce")])
     with pytest.raises(ValidationError):
-        predict_batch(pipeline, profiles, df)
+        predictor.predict_batch(df)

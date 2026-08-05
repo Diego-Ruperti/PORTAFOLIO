@@ -28,18 +28,63 @@ Este proyecto tiene dos capas:
    equivalente, entrenado sobre los mismos datos validados, sirviendo
    predicciones en tiempo real desde Streamlit.
 
-## Reentrenar el modelo
+### Módulos principales (`src/`)
+
+- `config.py` — constantes y reglas de negocio (columnas, hiperparámetros
+  del modelo, precios/canales por segmento). Sin lógica, solo datos.
+- `train_model.py` → **`WineModelTrainer`** — entrena el pipeline
+  `StandardScaler + KMeans` y persiste el modelo (`.joblib`) y el perfil de
+  clusters (`.json`). `WineModelTrainer(data_path, model_path,
+  profile_path).train()`.
+- `predictor.py` → **`WinePredictor`** — carga el modelo entrenado y
+  clasifica vinos. `WinePredictor(model_path, profile_path)` expone
+  `.predict_single(features)`, `.predict_batch(df)` y el estático
+  `.validate_columns(df)`.
+- `app.py` cachea una única instancia de `WinePredictor` (`get_predictor()`,
+  vía `st.cache_resource`) y la reutiliza en las 4 pestañas del dashboard.
+
+## Comandos rápidos (Makefile)
 
 ```bash
+make build    # construye la imagen wineiq:dev
+make train    # entrena el modelo (genera models/*.joblib y cluster_profile.json)
+make test     # corre pytest
+make lint     # corre ruff
+make retrain  # build + train
+make up       # docker compose up --build
+make down     # docker compose down
+make all      # build + train + test + lint
+```
+
+## Reentrenar el modelo (sin `make`)
+
+Usa `make retrain` si tienes `make` instalado (recomendado — funciona igual
+en PowerShell, cmd o Git Bash). Si prefieres el comando de Docker directo:
+
+```bash
+# Git Bash / WSL / macOS / Linux
 docker build -t wineiq:dev .
 docker run --rm -v "$(pwd):/app" -w /app wineiq:dev python -m src.train_model
 ```
 
-## Tests
+```powershell
+# PowerShell
+docker build -t wineiq:dev .
+docker run --rm -v "${PWD}:/app" -w /app wineiq:dev python -m src.train_model
+```
+
+## Tests (sin `make`)
+
+`make test` es el atajo recomendado. Equivalente directo:
 
 ```bash
-docker build -t wineiq:dev .
+# Git Bash / WSL / macOS / Linux
 docker run --rm -v "$(pwd):/app" -w /app wineiq:dev pytest tests/ -v
+```
+
+```powershell
+# PowerShell
+docker run --rm -v "${PWD}:/app" -w /app wineiq:dev pytest tests/ -v
 ```
 
 ## Nota de transparencia

@@ -30,7 +30,10 @@ CLUSTER_PROFILE_PATH = "models/cluster_profile.json"
 CLUSTER_RULES = {
     "premium_reserve": {
         "name": "Premium Reserve",
-        "description": "Vinos robustos de alta gama con cuerpo intenso: mayor alcohol, flavonoides y prolina.",
+        "description": (
+            "Vinos robustos de alta gama con cuerpo intenso: mayor alcohol, "
+            "flavonoides y prolina."
+        ),
         "price_range": "$40-60",
         "channel": "Restaurantes premium, wine clubs y tiendas especializadas",
     },
@@ -42,7 +45,10 @@ CLUSTER_RULES = {
     },
     "light_fresh": {
         "name": "Light & Fresh",
-        "description": "Vinos ligeros y refrescantes, con menor nivel de flavonoides y mayor acidez.",
+        "description": (
+            "Vinos ligeros y refrescantes, con menor nivel de flavonoides y "
+            "mayor acidez."
+        ),
         "price_range": "$8-15",
         "channel": "Público joven, bares de vino y eventos",
     },

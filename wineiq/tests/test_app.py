@@ -1,5 +1,10 @@
 from streamlit.testing.v1 import AppTest
 
+# AppTest.from_file resolves relative paths against the file that calls it
+# (this test module, in tests/), not against the working directory — so the
+# path must point back up to the real app.py at the project root.
+APP_PATH = "../app.py"
+
 VALID_WINE = {
     "Alcohol": 14.23,
     "Malic_Acid": 1.71,
@@ -25,14 +30,18 @@ VALID_WINE_CSV = (
 
 
 def test_app_renders_title_and_three_metrics_without_error():
-    at = AppTest.from_file("app.py").run(timeout=30)
+    at = AppTest.from_file(APP_PATH).run(timeout=30)
     assert not at.exception
     assert at.title[0].value == "🍷 WineIQ"
-    assert len(at.metric) == 3
+    # AppTest executes every st.tabs() body in one run, so at.metric also
+    # picks up the "Sobre el modelo" tab's 2 metrics — check the header's 3
+    # are present by label instead of asserting an exact total count.
+    metric_labels = [m.label for m in at.metric]
+    assert {"Total de vinos", "Segmentos", "Segmento más común"} <= set(metric_labels)
 
 
 def test_single_form_classifies_a_valid_wine():
-    at = AppTest.from_file("app.py").run(timeout=30)
+    at = AppTest.from_file(APP_PATH).run(timeout=30)
     for column, value in VALID_WINE.items():
         at.number_input(key=f"input_{column}").set_value(value)
     at.button[0].click().run(timeout=30)
@@ -47,6 +56,7 @@ def test_process_uploaded_csv_classifies_valid_rows():
 
     classified, errors = process_uploaded_csv(VALID_WINE_CSV.encode("utf-8"))
     assert errors == []
+    assert classified is not None
     assert len(classified) == 2
     assert "Segmento" in classified.columns
 
@@ -61,7 +71,7 @@ def test_process_uploaded_csv_rejects_file_with_any_invalid_row():
 
 
 def test_model_quality_tab_shows_silhouette_metric():
-    at = AppTest.from_file("app.py").run(timeout=60)
+    at = AppTest.from_file(APP_PATH).run(timeout=60)
     assert not at.exception
     metric_labels = [m.label for m in at.metric]
     assert "Silhouette Score" in metric_labels
