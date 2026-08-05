@@ -1,0 +1,23 @@
+{
+  "1": {
+    "name": "Premium Reserve",
+    "description": "Vinos robustos de alta gama con cuerpo intenso: mayor alcohol, flavonoides y prolina.",
+    "price_range": "$40-60",
+    "channel": "Restaurantes premium, wine clubs y tiendas especializadas",
+    "cluster_id": 1
+  },
+  "2": {
+    "name": "Classic Balance",
+    "description": "Vinos equilibrados con perfil intermedio y tradicional.",
+    "price_range": "$15-25",
+    "channel": "Supermercados y distribución masiva",
+    "cluster_id": 2
+  },
+  "0": {
+    "name": "Light & Fresh",
+    "description": "Vinos ligeros y refrescantes, con menor nivel de flavonoides y mayor acidez.",
+    "price_range": "$8-15",
+    "channel": "Público joven, bares de vino y eventos",
+    "cluster_id": 0
+  }
+}
